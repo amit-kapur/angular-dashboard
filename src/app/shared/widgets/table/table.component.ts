@@ -1,4 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import { DashboardService } from 'src/app/modules/dashboard.service';
+
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  weight: number;
+  symbol: string;
+}
 
 @Component({
   selector: 'app-widget-table',
@@ -7,9 +17,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TableComponent implements OnInit {
 
-  constructor() { }
+  ELEMENT_DATA: PeriodicElement[] = [];
+  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  dataSource = new MatTableDataSource<PeriodicElement>([]);
 
-  ngOnInit(): void {
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+
+  constructor(private dashboardService: DashboardService) {}
+
+  ngOnInit() {
+    this.ELEMENT_DATA = this.dashboardService.table();
+    this.dataSource = new MatTableDataSource<PeriodicElement>(this.ELEMENT_DATA);
+    this.dataSource.paginator = this.paginator;
   }
-
 }
+
+
